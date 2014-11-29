@@ -15,7 +15,10 @@ import android.view.View;
 public class SingleTouchEventView extends View {
 
     private Path path = new Path();
+    private float eventX;
+    private float eventY;
     private Paint paint = new Paint();
+    private boolean circle= false;
 
     public SingleTouchEventView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -32,17 +35,21 @@ public class SingleTouchEventView extends View {
     @Override
     protected void onDraw(Canvas canvas){
         canvas.drawPath(path,paint);
+        if (circle) {
+            canvas.drawCircle(eventX, eventY, 30F, paint);
+        }
 
     }
     @Override
     public boolean onTouchEvent (MotionEvent event){
-        float eventX = event.getX();
-        float eventY = event.getY();
+        eventX = event.getX();
+        eventY = event.getY();
         int action = event.getAction();
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 path.moveTo(eventX,eventY);
+                circle = true;
                 return true;
             case MotionEvent.ACTION_MOVE:
                 path.lineTo(eventX,eventY);
@@ -50,6 +57,8 @@ public class SingleTouchEventView extends View {
                 return true;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                circle = false;
+                invalidate();
                 return true;
 
             default:
